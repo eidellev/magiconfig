@@ -1,17 +1,17 @@
 /**
- * Config builder unit tests
+ * Magiconfig unit tests
  */
 
 'use strict'
 
-var chai   = require('chai')
-var expect = chai.expect
-var builder = require('../main').configBuilder
-var Path = require('path')
+var chai       = require('chai')
+var expect     = chai.expect
+var magiconfig = require('../magiconfig')
+var Path       = require('path')
 
-describe('Config builder module', function () {
+describe('Config magiconfig module', function () {
     it('Should load a `.toml` config file', function () {
-        var config = builder.build({
+        var config = magiconfig({
             envConfig: {
                 'test': Path.join(__dirname, './files/test.toml')
             }
@@ -20,7 +20,7 @@ describe('Config builder module', function () {
     })
 
     it('Should validate env config file against a template', function () {
-        builder.build({
+        magiconfig({
             templateFile: Path.join(__dirname, './files/template.toml'),
             envConfig: {
                 'test': Path.join(__dirname, './files/test.toml')
@@ -29,7 +29,7 @@ describe('Config builder module', function () {
     })
 
     it('Should reject env config file that has missing key (compared to template)', function () {
-        expect(builder.build.bind('params', {
+        expect(magiconfig.bind('params', {
             templateFile: Path.join(__dirname, './files/template2.toml'),
             envConfig: {
                 'test': Path.join(__dirname, './files/test.toml')
@@ -38,7 +38,7 @@ describe('Config builder module', function () {
     })
 
     it('Should reject env config file that has missing mandatory key values', function () {
-        expect(builder.build.bind('params', {
+        expect(magiconfig.bind('params', {
             templateFile: Path.join(__dirname, './files/template.toml'),
             envConfig: {
                 'test': Path.join(__dirname, './files/test.toml')
@@ -48,7 +48,7 @@ describe('Config builder module', function () {
     })
 
     it('Should reject env config file that has missing mandatory key values (using `*` to signify that all keys are mandatory)', function () {
-        expect(builder.build.bind('params', {
+        expect(magiconfig.bind('params', {
             templateFile: Path.join(__dirname, './files/template.toml'),
             envConfig: {
                 'test': Path.join(__dirname, './files/test.toml')
@@ -58,7 +58,7 @@ describe('Config builder module', function () {
     })
 
     it('Should exclude key from mandatory keys when using the `-` prefix (using `*` to signify that all keys are mandatory)', function () {
-        expect(builder.build.bind('params', {
+        expect(magiconfig.bind('params', {
             templateFile: Path.join(__dirname, './files/template.toml'),
             envConfig: {
                 'test': Path.join(__dirname, './files/test.toml')

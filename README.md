@@ -1,33 +1,27 @@
-# techsee-common
-This repo contains various useful common utilities.
-
-
-## config-builder
+# Magiconfig
 This is a tool for building app configuration based on the environment that it's run in.
 
-### Requiring config-builder
-
-```javascript
-var configBuilder = require('techsee-common').configBuilder
+### Installation
 ```
-
-OR
-
-```javascript
-var configBuilder = require('techsee-common/lib/config-builder')
+npm i magiconfig --save
 ```
 
 ### Usage
 
 ```javascript
-configBuilder.build(params);
+var magiconfig = require('magiconfig')
 ```
 
-`build` accepts a configuration object with the following properties:
+```javascript
+var config = magiconfig(params);
+```
+
+Magiconfig accepts a configuration object with the following properties:
 * `envConfig` - Key-value pairs of environment names and their respective config files
 * `template` - Path to config template file
 * `mandatoryKeys` - A list of keys that require values.
 * `staticConfig` - Path to static config file
+* `validate` - Custom validation function
 
 #### envConfig
 An object with key-value pairs of environment names and their config files(can be either `.toml`, `.json` or `.js` files). i.e.
@@ -47,35 +41,19 @@ a = 'some string'
 b = 1 # should be a number
 
 [api]
-ip = '12.5.136.2'
+hostname = 'someapi.com'
+port = 1337
 ...
 ```
 #### staticConfig(Optional)
 Oftentimes an app has static values that do not change between different environments.
 The static config file will be merged with the environment config.
+Environment config parameters will override their static counterparts.
 
 #### mandatoryKeys(Optional)
 Use this to provide a list of mandatory keys(currently we only guard against empty strings).
-You can use dot notation for nested keys (i.e. `['api.ip']`).
-If you wish to mark all keys as mandatory simply use `['*']`. However, if you still want to exclude some keys use the `'-'` prefix: `['*', '-api.ip']`
+You can use dot notation for nested keys (i.e. `['api.hostname']`).
+If you wish to mark all keys as mandatory simply use `['*']`. However, if you still want to exclude some keys use the `'-'` prefix: `['*', '-api.port']`
 
-## login-info-encoder
-This is a tool for for encoding and decoding login information on both the client and the server.
-
-### Requiring login-info-encoder
-
-```javascript
-var encoder = require('techsee-common').loginInfoEncoder
-```
-
-OR
-
-```javascript
-var encoder = require('techsee-common/lib/login-info-encoder')
-```
-
-### Usage
-`login-info-encoder` exposes to methods:
-
-* `encode` accepts two parameters: `userName` and `password` and returns a base64 encoded string
-* `decode` return a login info object, e.g. `{ userName: 'hello', password: 'world' }`
+### validate (optional)
+Additional custom validation function
