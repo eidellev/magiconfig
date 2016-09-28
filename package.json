@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TechSee/common.git"
+    "url": "git+https://github.com/eidellev/magiconfig"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/TechSee/common/issues"
+    "url": "https://github.com/eidellev/magiconfig/issues"
   },
-  "homepage": "https://github.com/TechSee/common#readme",
+  "homepage": "https://github.com/eidellev/magiconfig/#readme",
   "dependencies": {
     "app-root-path": "~2.0.1",
     "chai": "~3.5.0",
