@@ -12,6 +12,26 @@ require('toml-require').install()
 // Allow 'requireing' YAML files
 require('require-yaml')
 
+function _reqFile(file) {
+    const path = Path.resolve(appRoot, file)
+
+    if (!path) {
+        throw new Error(chalk.bold.red(`File '${path}' not found!`))
+    }
+
+    if (!fs.existsSync(path)) {
+        throw new Error(chalk.bold.red(`Env config '${path}' file is missing!`))
+    }
+
+    try {
+        const data = require(path)
+
+        return data
+    } catch (err) {
+        throw new Error(chalk.bold.red(`Unable to parse env config file: ${err.message}`))
+    }
+}
+
 module.exports = {
     getEnv: () => {
         const env = process.env.NODE_ENV
@@ -28,24 +48,7 @@ module.exports = {
             throw new Error(chalk.bold.red('[params.envConfig] is mandatory!'))
         }
 
-        console.log(appRoot)
-        const path = Path.resolve(appRoot, envConfig[env])
-        if (!path) {
-            throw new Error(chalk.bold.red(`There is no config path for ENV=${env}`))
-        }
-
-        if (!fs.existsSync(path)) {
-            throw new Error(chalk.bold.red(`Env config '${path}' file is missing!`))
-        }
-
-        try {
-            const config = require(path)
-
-            return config
-        } catch (err) {
-            console.error(chalk.bold.red(`Unable to parse env config file: ${err.message}`))
-            throw err
-        }
+        return _reqFile(envConfig[env])
     },
 
     getTemplate: (templateFile) => {
@@ -53,20 +56,7 @@ module.exports = {
             return {}
         }
 
-        const path = Path.resolve(appRoot, templateFile)
-
-        if (!fs.existsSync(path)) {
-            throw new Error(chalk.bold.red(`Template file '${path}' is missing!`))
-        }
-
-        try {
-            const template = require(path)
-
-            return template
-        } catch (err) {
-            console.error(chalk.bold.red(`Unable to parse template file: ${err.message}`))
-            throw err
-        }
+        return _reqFile(templateFile)
     },
 
     getStaticConfig: (staticConfig) => {
@@ -74,20 +64,7 @@ module.exports = {
             return {}
         }
 
-        const path = Path.resolve(appRoot, staticConfig)
-
-        if (!fs.existsSync(path)) {
-            throw new Error(chalk.bold.red(`Static config file '${path}' is missing!`))
-        }
-
-        try {
-            const config = require(path)
-
-            return config
-        } catch (err) {
-            console.error(chalk.bold.red(`Unable to parse static config file: ${err.message}`))
-            throw err
-        }
+        return _reqFile(staticConfig)
     },
 
     validateAgainstTemplate: (envConfig, template) => {

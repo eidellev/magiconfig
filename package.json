@@ -1,6 +1,6 @@
 {
   "name": "magiconfig",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Yet another Node.js config utility :-)",
   "main": "magiconfig.js",
   "scripts": {
