@@ -17,7 +17,6 @@ const helper = require('./helpers/magiconfig.helper')
  * Builds a configuration object based on NODE_ENV and oprional static config
  *
  * @param   {Object}            [params]                builder params
- * @param   {String}            [params.envParam]       Environment parameter name
  * @param   {String}            [params.template]       Path to config template file
  * @param   {Object}            [params.envConfig]      Key-value pairs: { 'env name': 'env config file' }, i.e. { dev: './config/dev.toml' }
  * @param   {String}            [params.staticConfig]   Path to static config
@@ -29,7 +28,7 @@ const helper = require('./helpers/magiconfig.helper')
  * @return  {Object}                                    A merged config object (static config + env config)
  */
 function build (params) {
-    const env          = helper.getEnv(params.envParam)
+    const env          = helper.getEnv()
     const envConfig    = helper.getEnvConfig(params.envConfig, env)
     const template     = helper.getTemplate(params.templateFile)
     const staticConfig = helper.getStaticConfig(params.staticConfig)

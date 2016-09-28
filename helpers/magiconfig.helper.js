@@ -4,6 +4,8 @@ const traverse = require('traverse')
 const _        = require('lodash')
 const chalk    = require('chalk')
 const fs       = require('fs-extra')
+const Path     = require('path')
+const appRoot  = require('app-root-path').path
 
 // Allow 'requiring' TOML files
 require('toml-require').install()
@@ -11,11 +13,11 @@ require('toml-require').install()
 require('require-yaml')
 
 module.exports = {
-    getEnv: (envParam) => {
-        const env = process.env[envParam] || process.env.NODE_ENV
+    getEnv: () => {
+        const env = process.env.NODE_ENV
 
         if (!env) {
-            throw new Error(chalk.bold.red(`${envParam || 'NODE_ENV'} is not set!`))
+            throw new Error(chalk.bold.red('NODE_ENV is not set!'))
         }
 
         return env
@@ -26,8 +28,8 @@ module.exports = {
             throw new Error(chalk.bold.red('[params.envConfig] is mandatory!'))
         }
 
-        const path = envConfig[env]
-
+        console.log(appRoot)
+        const path = Path.resolve(appRoot, envConfig[env])
         if (!path) {
             throw new Error(chalk.bold.red(`There is no config path for ENV=${env}`))
         }
@@ -51,12 +53,14 @@ module.exports = {
             return {}
         }
 
-        if (!fs.existsSync(templateFile)) {
-            throw new Error(chalk.bold.red(`Template file '${templateFile}' is missing!`))
+        const path = Path.resolve(appRoot, templateFile)
+
+        if (!fs.existsSync(path)) {
+            throw new Error(chalk.bold.red(`Template file '${path}' is missing!`))
         }
 
         try {
-            const template = require(templateFile)
+            const template = require(path)
 
             return template
         } catch (err) {
@@ -70,12 +74,14 @@ module.exports = {
             return {}
         }
 
-        if (!fs.existsSync(staticConfig)) {
-            throw new Error(chalk.bold.red(`Static config file '${staticConfig}' is missing!`))
+        const path = Path.resolve(appRoot, staticConfig)
+
+        if (!fs.existsSync(path)) {
+            throw new Error(chalk.bold.red(`Static config file '${path}' is missing!`))
         }
 
         try {
-            const config = require(staticConfig)
+            const config = require(path)
 
             return config
         } catch (err) {

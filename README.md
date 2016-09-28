@@ -17,15 +17,11 @@ var config = magiconfig(params);
 ```
 
 Magiconfig accepts a configuration object with the following properties:
-* `envParam` - Environment parameter name
 * `envConfig` - Key-value pairs of environment names and their respective config files
 * `template` - Path to config template file
 * `mandatoryKeys` - A list of keys that require values.
 * `staticConfig` - Path to static config file
 * `validate` - Custom validation function
-
-#### envParam (optional)
-If `NODE_ENV` if too pedestrian for you, feel free to use your own environment parameter.
 
 #### envConfig
 An object with key-value pairs of environment names and their config files(can be either `.toml`, `.json` or `.js` files). i.e.
@@ -60,4 +56,16 @@ You can use dot notation for nested keys (i.e. `['api.hostname']`).
 If you wish to mark all keys as mandatory simply use `['*']`. However, if you still want to exclude some keys use the `'-'` prefix: `['*', '-api.port']`
 
 ### validate (optional)
-Additional custom validation function
+Additional custom validation function. Function accepts the final config and a callback:
+```javascript
+    ...
+    validate: function(config, cb) {
+        if (config.port !== 1337) {
+            // Invalid config
+            return cb (new Error('Invalid port number'))
+        }
+
+        // Valid config
+        cb(null)
+    }
+```
