@@ -17,11 +17,15 @@ var config = magiconfig(params);
 ```
 
 Magiconfig accepts a configuration object with the following properties:
+* `envParam` - Environment parameter name
 * `envConfig` - Key-value pairs of environment names and their respective config files
 * `template` - Path to config template file
 * `mandatoryKeys` - A list of keys that require values.
 * `staticConfig` - Path to static config file
 * `validate` - Custom validation function
+
+#### envParam (optional)
+If `NODE_ENV` if too pedestrian for you, feel free to use your own environment parameter.
 
 #### envConfig
 An object with key-value pairs of environment names and their config files(can be either `.toml`, `.json` or `.js` files). i.e.
