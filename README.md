@@ -10,9 +10,7 @@ npm i magiconfig --save
 
 ```javascript
 var magiconfig = require('magiconfig')
-```
 
-```javascript
 var config = magiconfig(params);
 ```
 
@@ -33,7 +31,7 @@ An object with key-value pairs of environment names and their config files(can b
 ```
 
 #### template(Optional)
-Use this to validate a config file against a template file(can be either a `.toml`, `.json` or `.js` file).
+Use this to validate a config file against a template file(can be either a `.toml`, `.yml`, `.yaml`, `.json` or `.js` file).
 The template file must itself be valid and contain all the keys that you wish the config file to have (including nested objects!). The values are not used anywhere, so feel free to provide sample values and comments to make it easier on the user.
 
 ```toml
