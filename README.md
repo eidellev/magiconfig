@@ -11,7 +11,7 @@ npm i magiconfig --save
 ```javascript
 var magiconfig = require('magiconfig')
 
-var config = magiconfig(params);
+var config = magiconfig(params)
 ```
 
 Magiconfig accepts a configuration object with the following properties:
@@ -22,17 +22,26 @@ Magiconfig accepts a configuration object with the following properties:
 * `validate` - Custom validation function
 
 #### envConfig
-An object with key-value pairs of environment names and their config files(can be either `.toml`, `.json` or `.js` files). i.e.
+An object with key-value pairs of environment names and their config files(can be either `.toml`, `.yml`, `.yaml`, `.json` or `.js` files). i.e.
 ```javascript
 {
     dev: '/path/to/your/file'
     prod: '/path/to/some/other/file'
 }
 ```
+Your environment is determined based on `NODE_ENV`. For instance, you can set it this way through package.json:
+```json
+...
+"scripts": {
+    "run-dev": "NODE_ENV=dev node app.js",
+    "run-prod": "NODE_ENV=prod node app.js"
+}
+...
+```
 
 #### template(Optional)
 Use this to validate a config file against a template file(can be either a `.toml`, `.yml`, `.yaml`, `.json` or `.js` file).
-The template file must itself be valid and contain all the keys that you wish the config file to have (including nested objects!). The values are not used anywhere, so feel free to provide sample values and comments to make it easier on the user.
+The template file must itself be valid and contain all the keys that you wish the config file to have, including nested keys. The values are not used anywhere, so feel free to provide sample values and comments.
 
 ```toml
 a = 'some string'
@@ -53,7 +62,7 @@ Use this to provide a list of mandatory keys(currently we only guard against emp
 You can use dot notation for nested keys (i.e. `['api.hostname']`).
 If you wish to mark all keys as mandatory simply use `['*']`. However, if you still want to exclude some keys use the `'-'` prefix: `['*', '-api.port']`
 
-### validate (optional)
+#### validate (optional)
 Additional custom validation function. Function accepts the final config and a callback:
 ```javascript
     ...
@@ -64,6 +73,6 @@ Additional custom validation function. Function accepts the final config and a c
         }
 
         // Valid config
-        cb(null)
+        cb()
     }
 ```

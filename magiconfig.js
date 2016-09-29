@@ -1,10 +1,5 @@
 /**
  * Config builder module
- *
- * TODO:
- * Lint
- * Use gulp
- * Add support for YAML files
  */
 
 'use strict'

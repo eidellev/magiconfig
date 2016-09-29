@@ -1,3 +1,7 @@
+/**
+ * Helper module
+ */
+
 'use strict'
 
 const traverse = require('traverse')
@@ -5,6 +9,7 @@ const _        = require('lodash')
 const chalk    = require('chalk')
 const fs       = require('fs-extra')
 const Path     = require('path')
+// The base path of the app that uses 'magiconfig'
 const appRoot  = require('app-root-path').path
 
 // Allow 'requiring' TOML files
@@ -12,6 +17,11 @@ require('toml-require').install()
 // Allow 'requireing' YAML files
 require('require-yaml')
 
+/**
+ * Requires file and returns an object
+ * @param  {String} file    File relative path
+ * @return {Object}         File content serialized into object
+ */
 function _reqFile(file) {
     const path = Path.resolve(appRoot, file)
 
@@ -33,6 +43,11 @@ function _reqFile(file) {
 }
 
 module.exports = {
+
+    /**
+     * Returns the app environment
+     * @return {String} App environment (based on NODE_ENV)
+     */
     getEnv: () => {
         const env = process.env.NODE_ENV
 
@@ -43,14 +58,29 @@ module.exports = {
         return env
     },
 
+    /**
+     * Returns environment config
+     * @param  {Object} envConfig   Key-value pairs of environments and relative file paths
+     * @param  {String} env         Environment name
+     * @return {String}             Environment config
+     */
     getEnvConfig: (envConfig, env) => {
         if (_.isEmpty(envConfig)) {
             throw new Error(chalk.bold.red('[params.envConfig] is mandatory!'))
         }
 
+        if (!envConfig[env]) {
+            throw new Error(chalk.bold.red(`Missing config for NODE_ENV=${env}`))
+        }
+
         return _reqFile(envConfig[env])
     },
 
+    /**
+     * Returns config template
+     * @param  {String} templateFile Template file relative path
+     * @return {Object}              Config template
+     */
     getTemplate: (templateFile) => {
         if (!templateFile) {
             return {}
@@ -59,6 +89,11 @@ module.exports = {
         return _reqFile(templateFile)
     },
 
+    /**
+     * Returns static config
+     * @param  {String} staticConfig Static configrelative path
+     * @return {Object}              Static config
+     */
     getStaticConfig: (staticConfig) => {
         if (!staticConfig) {
             return {}
@@ -67,6 +102,12 @@ module.exports = {
         return _reqFile(staticConfig)
     },
 
+    /**
+     * Validates environment config against template.
+     * When validation fails, throws error.
+     * @param  {Object} envConfig Environment config
+     * @param  {Object} template  Config template
+     */
     validateAgainstTemplate: (envConfig, template) => {
         if (!template) {
             return
@@ -85,6 +126,12 @@ module.exports = {
         }
     },
 
+    /**
+     * Validates environment config against list of mandatory keys
+     * When validation fails, throws error.
+     * @param  {Object} envConfig       Environment config
+     * @param  {Array}  mandatoryKeys   Mandatory keys
+     */
     validateMandatoryKeys: (envConfig, mandatoryKeys) => {
         if (!mandatoryKeys) {
             return
@@ -115,6 +162,12 @@ module.exports = {
         }
     },
 
+    /**
+     * Performas custom validation.
+     * When validation fails, throws error.
+     * @param  {Function}   validateFn   Validation function signature: `function(config, cb)`
+     * @param  {Object}     config       Final config which is the result of merging static config with environment config
+     */
     customValidate: (validateFn, config) => {
         if (!validateFn) {
             return
