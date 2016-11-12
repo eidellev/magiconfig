@@ -1,5 +1,13 @@
 # Magiconfig
 This is a tool for building app configuration based on the environment that it's run in.
+Magiconfig does the work of validating your config for you and is flexible enough to allow you as little or as much control over it as you would like.<br>
+<strong>Note1:</strong><br>
+Each validation step throws an error. For instance:<br>
+<i>'NODE_ENV is not set!'</i><br>
+<i>'Unable to parse env config file: 'config.yml''</i><br>
+
+<strong>Note2:</strong><br>
+Magiconfig uses some ES6 features and won't work on older node installations
 
 ### Installation
 ```
@@ -9,9 +17,9 @@ npm i magiconfig --save
 ### Usage
 
 ```javascript
-var magiconfig = require('magiconfig')
+const magiconfig = require('magiconfig')
 
-var config = magiconfig(params)
+const config = magiconfig(params)
 ```
 
 Magiconfig accepts a configuration object with the following properties:
@@ -19,6 +27,7 @@ Magiconfig accepts a configuration object with the following properties:
 * `template` - Path to config template file
 * `mandatoryKeys` - A list of keys that require values.
 * `staticConfig` - Path to static config file
+* `doTypeValidation` - Should we validate config types against the template?
 * `validate` - Custom validation function
 
 #### envConfig
@@ -62,11 +71,50 @@ Use this to provide a list of mandatory keys(currently we only guard against emp
 You can use dot notation for nested keys (i.e. `['api.hostname']`).
 If you wish to mark all keys as mandatory simply use `['*']`. However, if you still want to exclude some keys use the `'-'` prefix: `['*', '-api.port']`
 
+#### doTypeValidation(Optional)
+(Works in conjunction with 'template')<br>
+Validate the types of properties in our config as set in the config template.
+Supported types are:
+* number
+* boolean
+* string
+* array
+* object
+
+<strong>Example</strong>:
+```javascript
+// config.js
+const config = magiconfig({
+    templateFile: 'template.toml',
+    envConfig: {
+        'prod': 'test4.toml'
+    },
+    doTypeValidation: true
+})
+```
+```toml
+    # template.toml
+    a = 'string'
+    b = 'number'
+    c = 'array'
+    d = 'object'
+```
+
+```toml
+    # config.toml
+    a = 'some srting'
+    b = '123'
+    c = [1, 2, 3]
+    [d]
+    e = 'Object property'
+    f = 'Another object property'
+```
+
 #### validate (optional)
 Additional custom validation function. Function accepts the final config and a callback:
 ```javascript
     ...
-    validate: function(config, cb) {
+    validate: (config, cb) => {
         if (config.port !== 1337) {
             // Invalid config
             return cb (new Error('Invalid port number'))

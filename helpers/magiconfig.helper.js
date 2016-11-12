@@ -4,13 +4,14 @@
 
 'use strict'
 
-const traverse = require('traverse')
-const _        = require('lodash')
-const chalk    = require('chalk')
-const fs       = require('fs-extra')
-const Path     = require('path')
+const traverse      = require('traverse')
+const _             = require('lodash')
+const chalk         = require('chalk')
+const fs            = require('fs-extra')
+const Path          = require('path')
 // The base path of the app that uses 'magiconfig'
-const appRoot  = require('app-root-path').path
+const appRoot       = require('app-root-path').path
+const typeValidator = require('./type-validation.helper')
 
 // Allow 'requiring' TOML files
 require('toml-require').install()
@@ -108,7 +109,7 @@ module.exports = {
      * @param  {Object} envConfig Environment config
      * @param  {Object} template  Config template
      */
-    validateAgainstTemplate: (envConfig, template) => {
+    validateAgainstTemplate: (envConfig, template, doTypeValidation = false) => {
         if (!template) {
             return
         }
@@ -116,8 +117,15 @@ module.exports = {
         const missingKeys = []
 
         traverse(template).forEach(function () {
-            if (typeof traverse(envConfig).get(this.path) === 'undefined') {
-                missingKeys.push(this.path.join('.'))
+            const envParam = traverse(envConfig).get(this.path)
+            const path = this.path.join('.')
+
+            if (typeof envParam === 'undefined') {
+                missingKeys.push(path)
+            }
+
+            if (this.isLeaf && doTypeValidation) {
+                typeValidator(this.node, envParam, path)
             }
         })
 

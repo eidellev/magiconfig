@@ -77,7 +77,7 @@ describe('Config magiconfig module', () => {
         })).to.not.throw()
     })
 
-    it('Should pass custom validation)', () => {
+    it('Should pass custom validation', () => {
         expect(magiconfig.bind('params', {
             templateFile: Path.join(__dirname, './files/template.toml'),
             envConfig: {
@@ -89,7 +89,7 @@ describe('Config magiconfig module', () => {
         })).to.not.throw()
     })
 
-    it('Should fail custom validation)', () => {
+    it('Should fail custom validation', () => {
         expect(magiconfig.bind('params', {
             templateFile: Path.join(__dirname, './files/template.toml'),
             envConfig: {
@@ -98,6 +98,36 @@ describe('Config magiconfig module', () => {
             validate: (config, cb) => {
                 cb(new Error('blah'))
             }
+        })).to.throw()
+    })
+
+    it('Should pass type validation', () => {
+        expect(magiconfig.bind('params', {
+            templateFile: './spec/files/template3.toml',
+            envConfig: {
+                'test': './spec/files/test3.toml'
+            },
+            doTypeValidation: true
+        })).to.not.throw()
+    })
+
+    it('Should fail type validation for parameter with wrong type', () => {
+        expect(magiconfig.bind('params', {
+            templateFile: './spec/files/template4.toml',
+            envConfig: {
+                'test': './spec/files/test4.toml'
+            },
+            doTypeValidation: true
+        })).to.throw()
+    })
+
+    it('Should fail type validation for unknown type', () => {
+        expect(magiconfig.bind('params', {
+            templateFile: './spec/files/template5.toml',
+            envConfig: {
+                'test': './spec/files/test5.toml'
+            },
+            doTypeValidation: true
         })).to.throw()
     })
 })

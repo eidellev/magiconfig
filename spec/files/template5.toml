@@ -1,0 +1,9 @@
+a = 'unknowntype'
+b = 'boolean'
+c = 'string'
+
+[d]
+e = 'array'
+
+[d.f]
+g = 'object'
