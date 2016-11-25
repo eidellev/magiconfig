@@ -36,20 +36,31 @@ function handleObject (value, path) {
     }
 }
 
+function handleEnum (value, path, enumArr) {
+    if (_.indexOf(enumArr, value) < 0) {
+        throw new Error(`Expected '${path}' to be one of '${enumArr}' (instead got '${value}')`)
+    }
+}
+
 const typeDoctionary = {
     number: handleNumber,
     boolean: handleBoolean,
     string: handleString,
     array: handleArray,
-    object: handleObject
+    object: handleObject,
+    enum: handleEnum
 }
 
-module.exports = function (type, value, path) {
-    const handler = typeDoctionary[type.toLowerCase()]
+module.exports = function (params, value, path) {
+    const p = params.split(':')
+    const type = p[0]
+    const enumArr = _.map(_.split(p[1], ','), _.trim)
+
+    const handler = typeDoctionary[type.toLowerCase().trim()]
 
     if (!handler) {
         throw new Error(`Unknown type '${type}'`)
     }
 
-    handler(value, path)
+    handler(value, path, enumArr)
 }
