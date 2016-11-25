@@ -130,4 +130,24 @@ describe('Config magiconfig module', () => {
             doTypeValidation: true
         })).to.throw()
     })
+
+    it('Should validate enum', () => {
+        expect(magiconfig.bind('params', {
+            templateFile: './spec/files/template6.toml',
+            envConfig: {
+                'test': './spec/files/test6.toml'
+            },
+            doTypeValidation: true
+        })).to.not.throw()
+    })
+
+    it('Should fail to validate enum', () => {
+        expect(magiconfig.bind('params', {
+            templateFile: './spec/files/template6.toml',
+            envConfig: {
+                'test': './spec/files/test7.toml'
+            },
+            doTypeValidation: true
+        })).to.throw()
+    })
 })

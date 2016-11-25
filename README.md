@@ -1,13 +1,11 @@
 # Magiconfig
+[![npm version](https://badge.fury.io/js/magiconfig.svg)](https://badge.fury.io/js/magiconfig)
+
 This is a tool for building app configuration based on the environment that it's run in.
 Magiconfig does the work of validating your config for you and is flexible enough to allow you as little or as much control over it as you would like.<br>
-<strong>Note1:</strong><br>
-Each validation step throws an error. For instance:<br>
+<strong>Note:</strong><br>
+Each validation step throws an error upon failing. For instance, if you haven't set NODE_ENV you will get the following:<br>
 <i>'NODE_ENV is not set!'</i><br>
-<i>'Unable to parse env config file: 'config.yml''</i><br>
-
-<strong>Note2:</strong><br>
-Magiconfig uses some ES6 features and won't work on older node installations
 
 ### Installation
 ```
@@ -29,6 +27,8 @@ Magiconfig accepts a configuration object with the following properties:
 * `staticConfig` - Path to static config file
 * `doTypeValidation` - Should we validate config types against the template?
 * `validate` - Custom validation function
+
+<strong>Note</strong>: All paths are relative to project root.
 
 #### envConfig
 An object with key-value pairs of environment names and their config files(can be either `.toml`, `.yml`, `.yaml`, `.json` or `.js` files). i.e.
@@ -80,6 +80,7 @@ Supported types are:
 * string
 * array
 * object
+* enum
 
 <strong>Example</strong>:
 ```javascript
@@ -98,6 +99,7 @@ const config = magiconfig({
     b = 'number'
     c = 'array'
     d = 'object'
+    e = 'enum: abc,def,ghi'
 ```
 
 ```toml
@@ -114,10 +116,12 @@ const config = magiconfig({
 Additional custom validation function. Function accepts the final config and a callback:
 ```javascript
     ...
+    const fs = require('fs')
+
     validate: (config, cb) => {
-        if (config.port !== 1337) {
+        if (!fs.existsSync(config.path)) {
             // Invalid config
-            return cb (new Error('Invalid port number'))
+            return cb (new Error('Path does not exist!'))
         }
 
         // Valid config
